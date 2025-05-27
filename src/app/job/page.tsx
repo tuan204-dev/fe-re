@@ -8,7 +8,7 @@ import {
     FaSearch
 } from 'react-icons/fa';
 
-const RecruitProDashboard = () => {
+const JobPage = () => {
     return (
         <div className="flex-1 overflow-auto">
             {/* Mobile Header */}
@@ -131,4 +131,4 @@ const RecruitProDashboard = () => {
     );
 };
 
-export default RecruitProDashboard;
+export default JobPage;
