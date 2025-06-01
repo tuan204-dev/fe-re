@@ -1,11 +1,20 @@
-import Joi from "joi";
+import { JobType, RecruitingStatus } from "@/constants/enum";
 
 export interface ISalaryRange {
     min: number;
     max: number;
 }
 
-export const salaryRangeSchema = Joi.object({
-    min: Joi.number().min(0).required(),
-    max: Joi.number().min(Joi.ref('min')).required()
-});
+export interface IJob {
+    _id?: string
+    title: string
+    recruitingStatus?: RecruitingStatus
+    description: string
+    location: string
+    salaryRange: ISalaryRange
+    jobType: JobType
+    recruiterId?: string
+    companyId?: string
+    createdAt?: Date
+    updatedAt?: Date
+}

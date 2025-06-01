@@ -1,19 +1,21 @@
 'use client'
+import AuthServices from '@/services/authServices';
 import cn from '@/utils/cn';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
+import toast from 'react-hot-toast';
 import {
     FaBriefcase,
     FaCalendarAlt,
     FaCog,
     FaEnvelope,
-    FaFileAlt,
     FaHome,
     FaSignOutAlt
 } from 'react-icons/fa';
 
 const Sidebar = () => {
+    const router = useRouter()
     const pathname = usePathname()
 
     const menus = useMemo(() => [
@@ -22,12 +24,6 @@ const Sidebar = () => {
             path: '/',
             icon: <FaHome className="w-5 text-center" />,
             active: pathname === '/'
-        },
-        {
-            title: 'Posted Jobs',
-            path: '/job',
-            icon: <FaFileAlt className="w-5 text-center" />,
-            active: pathname.startsWith('/job')
         },
         {
             title: 'Messages',
@@ -47,13 +43,13 @@ const Sidebar = () => {
             icon: <FaCog className="w-5 text-center" />,
             active: pathname === '/account'
         },
-        {
-            title: 'Logout',
-            path: '/logout',
-            icon: <FaSignOutAlt className="w-5 text-center" />,
-            active: pathname === '/logout'
-        },
     ], [pathname])
+
+    const handleLogout = async () => {
+        await AuthServices.logout()
+        toast.success('Logout successfully')
+        router.push('/auth/login')
+    }
 
     return (
         <div className="w-64 bg-white shadow-sm flex-shrink-0 hidden md:block transition-all duration-300 fixed top-0 left-0 bottom-0 border-r border-gray-200">
@@ -78,6 +74,14 @@ const Sidebar = () => {
                         </Link>
                     ))
                 }
+                <div
+                    onClick={handleLogout}
+                    className={cn("nav-item flex items-center gap-3 p-3 rounded-lg border-l-4 border-transparent text-gray-600 cursor-pointer", {
+                    })}
+                >
+                    <FaSignOutAlt className="w-5 text-center" />
+                    <span>Logout</span>
+                </div>
             </nav>
         </div>
     )
