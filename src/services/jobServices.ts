@@ -1,6 +1,7 @@
-import { IJob } from "@/types/job"
+import { IJob, IRecruiting } from "@/types/job"
 import axiosInstance from "./axios"
 import { ApiResponse } from "@/types/common"
+import { truncateParams } from "@/utils/truncateParams"
 
 
 const createJob = async (jobData: IJob) => {
@@ -21,12 +22,19 @@ const closeJob = async (jobId: string) => {
     await axiosInstance.post(`/job/${jobId}/close`)
 }
 
-const getJobs = async () => {
-    const { data } = await axiosInstance.get<ApiResponse<IJob[]>>('/job')
+const getJobs = async (params?: any) => {
+    console.log('getJobs', params)
+    const { data } = await axiosInstance.get<ApiResponse<IJob[]>>('/job' + truncateParams(params))
 
     return data.data
 }
 
-const JobService = { createJob, getJobs, publicJob, pauseJob, closeJob }
+const getAllRecruiting = async (jobId: string) => {
+    const { data } = await axiosInstance.get<ApiResponse<IRecruiting[]>>(`/job/${jobId}/recruiting`)
+
+    return data.data;
+}
+
+const JobService = { createJob, getJobs, publicJob, pauseJob, closeJob, getAllRecruiting }
 
 export default JobService

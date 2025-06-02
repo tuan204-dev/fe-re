@@ -51,13 +51,17 @@ const logout = async () => {
 }
 
 const sendRegisterMail = async (email: string) => {
-    const { data, status } = await axiosNoAuth.post(`/recruiter/auth/send-mail`, { email });
-
-    console.log('status', status);
+    const { data } = await axiosNoAuth.post(`/recruiter/auth/send-mail`, { email });
 
     return data;
 }
 
-const AuthServices = { refreshToken, getUserInfo, login, logout, sendRegisterMail }
+const createRecruiter = async (params: any) => {
+    const { data } = await axiosNoAuth.post(`/recruiter/auth/register`, params);
+
+    return data;
+}
+
+const AuthServices = { refreshToken, getUserInfo, login, logout, sendRegisterMail, createRecruiter }
 
 export default AuthServices;
