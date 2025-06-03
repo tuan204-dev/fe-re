@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import toast from 'react-hot-toast';
-import { FaBriefcase, FaCalendarAlt, FaCog, FaEnvelope, FaHome, FaSignOutAlt } from 'react-icons/fa';
+import { FaBriefcase, FaEnvelope, FaHome, FaSignOutAlt } from 'react-icons/fa';
+import { PiBagSimpleFill } from "react-icons/pi";
 
 const Sidebar = () => {
     const router = useRouter();
@@ -26,16 +27,10 @@ const Sidebar = () => {
                 active: pathname === '/message',
             },
             {
-                title: 'Interview Schedule',
-                path: '/interview',
-                icon: <FaCalendarAlt className="w-5 text-center" />,
-                active: pathname === '/interview',
-            },
-            {
-                title: 'Account Settings',
-                path: '/account',
-                icon: <FaCog className="w-5 text-center" />,
-                active: pathname === '/account',
+                title: 'Create Job',
+                path: '/job/create',
+                icon: <PiBagSimpleFill className="w-5 text-center" />,
+                active: pathname === '/job/create',
             },
         ],
         [pathname]

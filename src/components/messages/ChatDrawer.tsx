@@ -63,6 +63,9 @@ const ChatDrawer: FC<ChatDrawerProps> = ({ isOpen, onClose }) => {
             open={isOpen}
             width={800}
             onClose={onClose}
+            classNames={{
+                body: '!p-0'
+            }}
             title={
                 <div className="flex items-center justify-between">
                     <Tag color={recruitingDetail?.progress === -1 ? 'red' : 'blue'}>

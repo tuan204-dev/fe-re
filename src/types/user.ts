@@ -26,6 +26,9 @@ export interface IWorker {
     avatar?: string;
     education?: string;
     skills?: ISkill[];
+    dateOfBirth?: Date;
+    description?: string;
+    careerOrientation?: string;
     isOpenToOffer?: boolean;
     createdAt: Date;
     updatedAt: Date;
