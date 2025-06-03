@@ -1,9 +1,9 @@
-import { ApiResponse } from "@/types/common";
-import axiosInstance, { axiosNoAuth, BASE_URL } from "./axios";
-import { IUser } from "@/types/user";
-import axios from "axios";
-import { deleteCookie, getCookie } from "cookies-next";
-import { COOKIES_REFRESH_TOKEN } from "@/constants/cookies";
+import { ApiResponse } from '@/types/common';
+import axiosInstance, { axiosNoAuth, BASE_URL } from './axios';
+import { IUser } from '@/types/user';
+import axios from 'axios';
+import { deleteCookie, getCookie } from 'cookies-next';
+import { COOKIES_REFRESH_TOKEN } from '@/constants/cookies';
 
 interface IRefreshTokenResponse {
     accessToken: string;
@@ -11,16 +11,18 @@ interface IRefreshTokenResponse {
 }
 
 const refreshToken = async (refreshToken: string) => {
-    const { data } = await axiosInstance.post<ApiResponse<IRefreshTokenResponse>>(`/recruiter/auth/refresh`, { refreshToken })
+    const { data } = await axiosInstance.post<ApiResponse<IRefreshTokenResponse>>(`/recruiter/auth/refresh`, {
+        refreshToken,
+    });
 
     return data;
-}
+};
 
 const getUserInfo = async () => {
-    const { data } = await axiosInstance.get<ApiResponse<IUser>>('/recruiter/auth/info')
+    const { data } = await axiosInstance.get<ApiResponse<IUser>>('/recruiter/auth/info');
 
-    return data
-}
+    return data;
+};
 
 interface ILoginReq {
     email: string;
@@ -34,34 +36,34 @@ interface ILoginRes {
 }
 
 const login = async (params: ILoginReq) => {
-    const { data } = await axios.post<ApiResponse<ILoginRes>>(BASE_URL + '/recruiter/auth/login', { ...params })
+    const { data } = await axios.post<ApiResponse<ILoginRes>>(BASE_URL + '/recruiter/auth/login', { ...params });
 
     return data;
-}
+};
 
 const logout = async () => {
-    const refreshToken = await getCookie(COOKIES_REFRESH_TOKEN)
+    const refreshToken = await getCookie(COOKIES_REFRESH_TOKEN);
 
     await axios.post(BASE_URL + '/recruiter/auth/logout', {
-        refreshToken
-    })
+        refreshToken,
+    });
 
     deleteCookie(COOKIES_REFRESH_TOKEN);
     deleteCookie(COOKIES_REFRESH_TOKEN);
-}
+};
 
 const sendRegisterMail = async (email: string) => {
     const { data } = await axiosNoAuth.post(`/recruiter/auth/send-mail`, { email });
 
     return data;
-}
+};
 
 const createRecruiter = async (params: any) => {
     const { data } = await axiosNoAuth.post(`/recruiter/auth/register`, params);
 
     return data;
-}
+};
 
-const AuthServices = { refreshToken, getUserInfo, login, logout, sendRegisterMail, createRecruiter }
+const AuthServices = { refreshToken, getUserInfo, login, logout, sendRegisterMail, createRecruiter };
 
 export default AuthServices;

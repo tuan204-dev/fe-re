@@ -1,9 +1,9 @@
-import { IMessage } from '@/types/job'
-import { formatTime } from '@/utils/time'
-import React, { FC } from 'react'
+import { IMessage } from '@/types/job';
+import { formatTime } from '@/utils/time';
+import React, { FC } from 'react';
 
 interface MessageItemProps {
-    message: IMessage
+    message: IMessage;
 }
 
 const ReceiverMessage: FC<MessageItemProps> = ({ message }) => {
@@ -16,16 +16,16 @@ const ReceiverMessage: FC<MessageItemProps> = ({ message }) => {
                     alt="Sarah Johnson"
                 />
             </div>
-            <div className='max-w-[70%]'>
+            <div className="max-w-[70%]">
                 <div className="w-fit bg-[#f3f4f6] text-[#111827] rounded-[18px] rounded-ss-none px-4 py-2 flex flex-col">
-                    <p className=''>
-                        {message?.content}
+                    <p className="">{message?.content}</p>
+                    <p className="text-xs text-gray-500 mt-1 whitespace-nowrap w-fit">
+                        {formatTime(String(message?.createdAt))}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1 whitespace-nowrap w-fit">{formatTime(String(message?.createdAt))}</p>
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default ReceiverMessage
+export default ReceiverMessage;

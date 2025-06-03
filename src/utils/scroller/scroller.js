@@ -1,79 +1,80 @@
 import utils from './utils';
 import animateScroll from './animate-scroll';
 
-let __mapped = {}
+let __mapped = {};
 let __activeLink;
 
 export default {
+    unmount: () => {
+        __mapped = {};
+    },
 
-  unmount: () => {
-    __mapped = {};
-  },
+    register: (name, element) => {
+        __mapped[name] = element;
+    },
 
-  register: (name, element) => {
-    __mapped[name] = element;
-  },
+    unregister: (name) => {
+        delete __mapped[name];
+    },
 
-  unregister: (name) => {
-    delete __mapped[name];
-  },
+    get: (name) =>
+        __mapped[name] ||
+        document.getElementById(name) ||
+        document.getElementsByName(name)[0] ||
+        document.getElementsByClassName(name)[0],
 
-  get: (name) => __mapped[name] || document.getElementById(name) || document.getElementsByName(name)[0] || document.getElementsByClassName(name)[0],
+    setActiveLink: (link) => (__activeLink = link),
 
-  setActiveLink: (link) => __activeLink = link,
+    getActiveLink: () => __activeLink,
 
-  getActiveLink: () => __activeLink,
+    scrollTo(to, props) {
+        let target = this.get(to);
 
-  scrollTo(to, props) {
-
-    let target = this.get(to);
-
-    if (!target) {
-      console.warn("target Element not found");
-      return;
-    }
-
-    props = Object.assign({}, props, { absolute: false });
-
-    let containerId = props.containerId;
-    let container = props.container;
-
-    let containerElement;
-    if (containerId) {
-      containerElement = document.getElementById(containerId);
-    } else if (container && container.nodeType) {
-      containerElement = container;
-    } else {
-      containerElement = document;
-    }
-
-    props.absolute = true;
-
-    let horizontal = props.horizontal
-    let scrollOffset = utils.scrollOffset(containerElement, target, horizontal) + (props.offset || 0);
-
-    /*
-     * if animate is not provided just scroll into the view
-     */
-    if (!props.smooth) {
-
-      if (containerElement === document) {
-        if (props.horizontal) {
-          window.scrollTo(scrollOffset, 0);
-        } else {
-          window.scrollTo(0, scrollOffset);
+        if (!target) {
+            console.warn('target Element not found');
+            return;
         }
-      } else {
-        containerElement.scrollTop = scrollOffset;
-      }
 
-      return;
-    }
+        props = Object.assign({}, props, { absolute: false });
 
-    /*
-     * Animate scrolling
-     */
+        let containerId = props.containerId;
+        let container = props.container;
 
-    animateScroll.animateTopScroll(scrollOffset, props, to, target);
-  }
+        let containerElement;
+        if (containerId) {
+            containerElement = document.getElementById(containerId);
+        } else if (container && container.nodeType) {
+            containerElement = container;
+        } else {
+            containerElement = document;
+        }
+
+        props.absolute = true;
+
+        let horizontal = props.horizontal;
+        let scrollOffset = utils.scrollOffset(containerElement, target, horizontal) + (props.offset || 0);
+
+        /*
+         * if animate is not provided just scroll into the view
+         */
+        if (!props.smooth) {
+            if (containerElement === document) {
+                if (props.horizontal) {
+                    window.scrollTo(scrollOffset, 0);
+                } else {
+                    window.scrollTo(0, scrollOffset);
+                }
+            } else {
+                containerElement.scrollTop = scrollOffset;
+            }
+
+            return;
+        }
+
+        /*
+         * Animate scrolling
+         */
+
+        animateScroll.animateTopScroll(scrollOffset, props, to, target);
+    },
 };

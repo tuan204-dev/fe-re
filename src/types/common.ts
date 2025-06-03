@@ -1,4 +1,3 @@
-
 export interface ApiResponse<T> {
     success: boolean;
     message: string;
@@ -14,5 +13,5 @@ interface PaginationResponse<T> {
 export interface PaginationApiResponse<T> {
     data: PaginationResponse<T>;
     status: boolean;
-    error: string | null
+    error: string | null;
 }

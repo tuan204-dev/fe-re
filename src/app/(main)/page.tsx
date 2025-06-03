@@ -1,19 +1,15 @@
-'use client'
+'use client';
 import JobCard from '@/components/JobCard';
 import { RecruitingStatus } from '@/constants/enum';
 import { useJobs } from '@/hooks/job';
 import cn from '@/utils/cn';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
-import {
-    FaBars,
-    FaPlus,
-    FaSearch
-} from 'react-icons/fa';
+import { FaBars, FaPlus, FaSearch } from 'react-icons/fa';
 
 const JobPage = () => {
-    const [activeStatus, setActiveStatus] = useState(-1)
-    const { jobs, mutate: refreshJobs } = useJobs()
+    const [activeStatus, setActiveStatus] = useState(-1);
+    const { jobs, mutate: refreshJobs } = useJobs();
 
     const jobStatusTabs = [
         {
@@ -23,31 +19,31 @@ const JobPage = () => {
         },
         {
             label: 'Draft',
-            count: jobs.filter(job => job.recruitingStatus === RecruitingStatus.DRAFT).length,
+            count: jobs.filter((job) => job.recruitingStatus === RecruitingStatus.DRAFT).length,
             status: RecruitingStatus.DRAFT,
         },
         {
             label: 'Public',
-            count: jobs.filter(job => job.recruitingStatus === RecruitingStatus.PUBLIC).length,
+            count: jobs.filter((job) => job.recruitingStatus === RecruitingStatus.PUBLIC).length,
             status: RecruitingStatus.PUBLIC,
         },
         {
             label: 'Paused',
-            count: jobs.filter(job => job.recruitingStatus === RecruitingStatus.PAUSED).length,
+            count: jobs.filter((job) => job.recruitingStatus === RecruitingStatus.PAUSED).length,
             status: RecruitingStatus.PAUSED,
         },
         {
             label: 'Closed',
-            count: jobs.filter(job => job.recruitingStatus === RecruitingStatus.CLOSED).length,
+            count: jobs.filter((job) => job.recruitingStatus === RecruitingStatus.CLOSED).length,
             status: RecruitingStatus.CLOSED,
-        }
-    ]
+        },
+    ];
 
     const renderedJobs = useMemo(() => {
         if (activeStatus === -1) {
             return jobs;
         }
-        return jobs.filter(job => job.recruitingStatus === activeStatus);
+        return jobs.filter((job) => job.recruitingStatus === activeStatus);
     }, [jobs, activeStatus]);
 
     return (
@@ -68,7 +64,10 @@ const JobPage = () => {
                         <h2 className="text-2xl font-bold text-gray-800">Job Management</h2>
                         <p className="text-gray-500">Manage all your posted job listings</p>
                     </div>
-                    <Link href={'/job/create'} className="mt-4 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap transition-colors">
+                    <Link
+                        href={'/job/create'}
+                        className="mt-4 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap transition-colors"
+                    >
                         <FaPlus />
                         <span>Post New Job</span>
                     </Link>
@@ -76,20 +75,24 @@ const JobPage = () => {
                 {/* Status Filters */}
                 <div className="bg-white rounded-lg shadow-sm p-1 mb-6 overflow-x-auto">
                     <div className="flex space-x-1 min-w-max">
-                        {
-                            jobStatusTabs.map((tab) => (
-                                <button key={tab.status} onClick={() => setActiveStatus(tab.status)} className={cn("px-4 py-2 rounded-lg font-medium text-sm hover:bg-gray-100", {
+                        {jobStatusTabs.map((tab) => (
+                            <button
+                                key={tab.status}
+                                onClick={() => setActiveStatus(tab.status)}
+                                className={cn('px-4 py-2 rounded-lg font-medium text-sm hover:bg-gray-100', {
                                     'bg-blue-50 text-blue-700': activeStatus === tab.status,
-                                })}>
-                                    {tab.label}{" "}
-                                    <span className={cn("bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full ml-1", {
+                                })}
+                            >
+                                {tab.label}{' '}
+                                <span
+                                    className={cn('bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full ml-1', {
                                         'bg-blue-100': activeStatus === tab.status,
-                                    })}>
-                                        {tab.count}
-                                    </span>
-                                </button>
-                            ))
-                        }
+                                    })}
+                                >
+                                    {tab.count}
+                                </span>
+                            </button>
+                        ))}
                     </div>
                 </div>
                 {/* Search and Filters */}
@@ -107,15 +110,9 @@ const JobPage = () => {
                 </div>
                 {/* Job List */}
                 <div className="space-y-4 mb-8">
-                    {
-                        renderedJobs.map((job) => (
-                            <JobCard
-                                key={job._id}
-                                job={job}
-                                refresh={refreshJobs}
-                            />
-                        ))
-                    }
+                    {renderedJobs.map((job) => (
+                        <JobCard key={job._id} job={job} refresh={refreshJobs} />
+                    ))}
                 </div>
                 {/* Pagination */}
                 {/* <div className="flex justify-between items-center">

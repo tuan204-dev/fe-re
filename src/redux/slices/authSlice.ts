@@ -1,13 +1,13 @@
-import { IUser } from "@/types/user";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { IUser } from '@/types/user';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface AuthSliceState {
-    user: IUser | null
+    user: IUser | null;
 }
 
 const initialState: AuthSliceState = {
-    user: null
-}
+    user: null,
+};
 
 export const authSlice = createSlice({
     name: 'auth',
@@ -15,9 +15,9 @@ export const authSlice = createSlice({
     reducers: {
         updateUser: (state, action: PayloadAction<IUser | null>) => {
             state.user = action.payload;
-        }
-    }
-})
+        },
+    },
+});
 
 export const { updateUser } = authSlice.actions;
 

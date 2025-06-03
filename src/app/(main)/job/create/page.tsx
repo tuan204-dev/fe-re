@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { useDistricts, useProvinces, useWards } from '@/hooks/location';
 import JobService from '@/services/jobServices';
 import LocationServices from '@/services/locationServices';
@@ -9,93 +9,105 @@ import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { FaPlus } from 'react-icons/fa';
-import { LuPlus } from "react-icons/lu";
+import { LuPlus } from 'react-icons/lu';
 import { MdClear } from 'react-icons/md';
 import { z } from 'zod';
 
-const schema = z.object({
-    title: z.string().min(1, 'Job title is required'),
-    description: z.string().min(1, 'Job description is required').max(1000, 'Description cannot exceed 1000 characters'),
-    jobType: z.number(),
-    location: z.string().min(1, 'Location is required'),
-    salaryRange: z.object({
-        min: z.string().min(0, 'Minimum salary must be at least 0'),
-        max: z.string().min(0, 'Maximum salary must be at least 0')
-    }),
-    responsibilities: z.array(z.string().min(1)).min(1, 'At least one responsibility is required'),
-    requirements: z.array(z.string().min(1)).min(1, 'At least one responsibility is required'),
-    benefits: z.array(z.string().min(1)).min(1, 'At least one responsibility is required'),
-}).refine(
-    (data) => {
-        if (!data.salaryRange.min || !data.salaryRange.max) return true;
+const schema = z
+    .object({
+        title: z.string().min(1, 'Job title is required'),
+        description: z
+            .string()
+            .min(1, 'Job description is required')
+            .max(1000, 'Description cannot exceed 1000 characters'),
+        jobType: z.number(),
+        location: z.string().min(1, 'Location is required'),
+        salaryRange: z.object({
+            min: z.string().min(0, 'Minimum salary must be at least 0'),
+            max: z.string().min(0, 'Maximum salary must be at least 0'),
+        }),
+        responsibilities: z.array(z.string().min(1)).min(1, 'At least one responsibility is required'),
+        requirements: z.array(z.string().min(1)).min(1, 'At least one responsibility is required'),
+        benefits: z.array(z.string().min(1)).min(1, 'At least one responsibility is required'),
+    })
+    .refine(
+        (data) => {
+            if (!data.salaryRange.min || !data.salaryRange.max) return true;
 
-        const minSalary = Number(data.salaryRange.min);
-        const maxSalary = Number(data.salaryRange.max);
+            const minSalary = Number(data.salaryRange.min);
+            const maxSalary = Number(data.salaryRange.max);
 
-        return minSalary <= maxSalary;
-    },
-    {
-        path: ['salaryRange.min', 'salaryRange.max'],
-        message: 'Minimum salary must be less than or equal to maximum salary',
-    }
-)
+            return minSalary <= maxSalary;
+        },
+        {
+            path: ['salaryRange.min', 'salaryRange.max'],
+            message: 'Minimum salary must be less than or equal to maximum salary',
+        }
+    );
 
 type FormData = z.infer<typeof schema>;
 
 const CreateJobPage = () => {
-    const router = useRouter()
+    const router = useRouter();
     const [selectedProvinceId, setSelectedProvinceId] = useState<string>('');
     const [selectedDistrictId, setSelectedDistrictId] = useState<string>('');
     const [selectedWardId, setSelectedWardId] = useState<string>('');
-    const { provinces } = useProvinces()
-    const { districts } = useDistricts(selectedProvinceId)
-    const { wards } = useWards(selectedDistrictId)
-    const { formState: { errors, isSubmitting }, handleSubmit, control, watch, setValue, trigger } = useForm<FormData>({
+    const { provinces } = useProvinces();
+    const { districts } = useDistricts(selectedProvinceId);
+    const { wards } = useWards(selectedDistrictId);
+    const {
+        formState: { errors, isSubmitting },
+        handleSubmit,
+        control,
+        watch,
+        setValue,
+        trigger,
+    } = useForm<FormData>({
         resolver: zodResolver(schema),
         defaultValues: {
             jobType: 0, // Default to Full-time
             responsibilities: [''],
             requirements: [''],
             benefits: [''],
-        }
-    })
+        },
+    });
 
-    const formData = watch()
+    const formData = watch();
 
-    const { description, responsibilities, requirements, benefits } = formData
+    const { description, responsibilities, requirements, benefits } = formData;
 
     const handleAddResponsibility = () => {
         const updatedResponsibilities = [...responsibilities, ''];
         setValue('responsibilities', updatedResponsibilities);
-    }
+    };
 
     const handleRemoveResponsibility = (index: number) => {
         const updatedResponsibilities = [...responsibilities];
         updatedResponsibilities.splice(index, 1);
         setValue('responsibilities', updatedResponsibilities);
-    }
+    };
 
     const handleAddRequirement = () => {
         const updatedRequirements = [...formData.requirements, ''];
         setValue('requirements', updatedRequirements);
-    }
+    };
 
     const handleRemoveRequirement = (index: number) => {
         const updatedRequirements = [...formData.requirements];
         updatedRequirements.splice(index, 1);
         setValue('requirements', updatedRequirements);
-    }
+    };
 
     const handleAddBenefit = () => {
         const updatedBenefits = [...formData.benefits, ''];
         setValue('benefits', updatedBenefits);
-    }
+    };
 
     const handleRemoveBenefit = (index: number) => {
         const updatedBenefits = [...formData.benefits];
         updatedBenefits.splice(index, 1);
         setValue('benefits', updatedBenefits);
-    }
+    };
 
     const createDraft = async (data: FormData) => {
         return await JobService.createJob({
@@ -105,29 +117,29 @@ const CreateJobPage = () => {
             location: data.location,
             salaryRange: {
                 min: Number(data.salaryRange.min),
-                max: Number(data.salaryRange.max)
+                max: Number(data.salaryRange.max),
             },
             responsibilities: data.responsibilities,
             requirements: data.requirements,
             benefits: data.benefits,
-        })
-    }
+        });
+    };
 
     const handlePublish = async (data: FormData) => {
         try {
-            const job = await createDraft(data)
-            await JobService.publicJob(job._id!)
+            const job = await createDraft(data);
+            await JobService.publicJob(job._id!);
             toast.success('Job posting created successfully!');
             router.push('/');
         } catch (e) {
             console.error('Error publishing job:', e);
             toast.error('Failed to publish job posting. Please try again later.');
         }
-    }
+    };
 
     const handleSavaDraft = async (data: FormData) => {
         try {
-            await createDraft(data)
+            await createDraft(data);
 
             toast.success('Draft saved successfully!');
             router.push('/');
@@ -135,7 +147,7 @@ const CreateJobPage = () => {
             console.error('Error publishing job:', e);
             toast.error('Failed to save draft. Please try again later.');
         }
-    }
+    };
 
     useEffect(() => {
         (async () => {
@@ -145,15 +157,17 @@ const CreateJobPage = () => {
 
             setValue('location', fullLocation.full_name);
             trigger('location');
-        })()
-    }, [selectedWardId])
+        })();
+    }, [selectedWardId]);
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-4xl">
             <div className="flex items-center justify-between mb-8">
                 <h1 className="text-2xl font-bold text-gray-800">Create New Job Posting</h1>
                 <div className="flex space-x-2">
-                    <Tag className='rounded-full' color='default'>Draft</Tag>
+                    <Tag className="rounded-full" color="default">
+                        Draft
+                    </Tag>
                 </div>
             </div>
             <div>
@@ -161,15 +175,12 @@ const CreateJobPage = () => {
                 <div className="section-card bg-white rounded-lg p-6 mb-6 shadow">
                     <h2 className="text-lg font-semibold text-gray-800 mb-4">Job Basics</h2>
                     <div className="mb-5">
-                        <label
-                            htmlFor="jobTitle"
-                            className="block text-sm font-medium text-gray-700 mb-1"
-                        >
+                        <label htmlFor="jobTitle" className="block text-sm font-medium text-gray-700 mb-1">
                             Job Title *
                         </label>
                         <Controller
                             control={control}
-                            name='title'
+                            name="title"
                             render={({ field }) => (
                                 <Input
                                     type="text"
@@ -184,15 +195,12 @@ const CreateJobPage = () => {
                         />
                     </div>
                     <div className="mb-5">
-                        <label
-                            htmlFor="jobDescription"
-                            className="block text-sm font-medium text-gray-700 mb-1"
-                        >
+                        <label htmlFor="jobDescription" className="block text-sm font-medium text-gray-700 mb-1">
                             Job Description *
                         </label>
                         <Controller
                             control={control}
-                            name='description'
+                            name="description"
                             render={({ field }) => (
                                 <Input.TextArea
                                     {...field}
@@ -211,13 +219,11 @@ const CreateJobPage = () => {
                         </div>
                     </div>
                     <div className="mb-5">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Job Type *
-                        </label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Job Type *</label>
                         <div className="flex flex-wrap gap-3">
                             <Controller
                                 control={control}
-                                name='jobType'
+                                name="jobType"
                                 render={({ field }) => (
                                     <Radio.Group
                                         {...field}
@@ -277,15 +283,12 @@ const CreateJobPage = () => {
                 <div className="section-card bg-white rounded-lg p-6 mb-6 shadow">
                     <h2 className="text-lg font-semibold text-gray-800 mb-4">Location</h2>
                     <div className="mb-4">
-                        <label
-                            htmlFor="address"
-                            className="block text-sm font-medium text-gray-700 mb-1"
-                        >
+                        <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                             Address
                         </label>
                         <Controller
                             control={control}
-                            name='location'
+                            name="location"
                             render={({ field }) => (
                                 <Input
                                     {...field}
@@ -301,10 +304,7 @@ const CreateJobPage = () => {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label
-                                htmlFor="province"
-                                className="block text-sm font-medium text-gray-700 mb-1"
-                            >
+                            <label htmlFor="province" className="block text-sm font-medium text-gray-700 mb-1">
                                 Province
                             </label>
                             <select
@@ -317,19 +317,18 @@ const CreateJobPage = () => {
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 defaultValue=""
                             >
-                                <option hidden value="">Select province</option>
-                                {
-                                    provinces?.map((province) => (
-                                        <option key={province.id} value={province.id}>{province.full_name}</option>
-                                    ))
-                                }
+                                <option hidden value="">
+                                    Select province
+                                </option>
+                                {provinces?.map((province) => (
+                                    <option key={province.id} value={province.id}>
+                                        {province.full_name}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                         <div>
-                            <label
-                                htmlFor="district"
-                                className="block text-sm font-medium text-gray-700 mb-1"
-                            >
+                            <label htmlFor="district" className="block text-sm font-medium text-gray-700 mb-1">
                                 District
                             </label>
                             <select
@@ -342,19 +341,18 @@ const CreateJobPage = () => {
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 defaultValue=""
                             >
-                                <option value="" hidden>Select district</option>
-                                {
-                                    districts?.map((district) => (
-                                        <option key={district.id} value={district.id}>{district.full_name}</option>
-                                    ))
-                                }
+                                <option value="" hidden>
+                                    Select district
+                                </option>
+                                {districts?.map((district) => (
+                                    <option key={district.id} value={district.id}>
+                                        {district.full_name}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                         <div>
-                            <label
-                                htmlFor="ward"
-                                className="block text-sm font-medium text-gray-700 mb-1"
-                            >
+                            <label htmlFor="ward" className="block text-sm font-medium text-gray-700 mb-1">
                                 Ward
                             </label>
                             <select
@@ -367,12 +365,14 @@ const CreateJobPage = () => {
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 defaultValue=""
                             >
-                                <option value="" hidden>Select ward</option>
-                                {
-                                    wards?.map((ward) => (
-                                        <option key={ward.id} value={ward.id}>{ward.full_name}</option>
-                                    ))
-                                }
+                                <option value="" hidden>
+                                    Select ward
+                                </option>
+                                {wards?.map((ward) => (
+                                    <option key={ward.id} value={ward.id}>
+                                        {ward.full_name}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                     </div>
@@ -383,42 +383,36 @@ const CreateJobPage = () => {
                     <h2 className="text-lg font-semibold text-gray-800 mb-4">Salary Range</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label
-                                htmlFor="salaryFrom"
-                                className="block text-sm font-medium text-gray-700 mb-1"
-                            >
+                            <label htmlFor="salaryFrom" className="block text-sm font-medium text-gray-700 mb-1">
                                 From
                             </label>
                             <Controller
                                 control={control}
-                                name='salaryRange.min'
+                                name="salaryRange.min"
                                 render={({ field }) => (
                                     <Input
                                         {...field}
-                                        type='number'
-                                        className='w-full'
-                                        size='large'
+                                        type="number"
+                                        className="w-full"
+                                        size="large"
                                         status={errors.salaryRange?.min ? 'error' : undefined}
                                     />
                                 )}
                             />
                         </div>
                         <div>
-                            <label
-                                htmlFor="salaryTo"
-                                className="block text-sm font-medium text-gray-700 mb-1"
-                            >
+                            <label htmlFor="salaryTo" className="block text-sm font-medium text-gray-700 mb-1">
                                 To
                             </label>
                             <Controller
                                 control={control}
-                                name='salaryRange.max'
+                                name="salaryRange.max"
                                 render={({ field }) => (
                                     <Input
                                         {...field}
-                                        type='number'
-                                        className='w-full'
-                                        size='large'
+                                        type="number"
+                                        className="w-full"
+                                        size="large"
                                         status={errors.salaryRange?.max ? 'error' : undefined}
                                     />
                                 )}
@@ -428,88 +422,118 @@ const CreateJobPage = () => {
                 </div>
 
                 <div className="section-card bg-white rounded-lg p-6 mb-6 shadow">
-                    <div className='flex items-center justify-between mb-4'>
-                        <h2 className="text-lg font-semibold text-gray-800">
-                            Responsibilities
-                        </h2>
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-lg font-semibold text-gray-800">Responsibilities</h2>
 
-                        <Button icon={<FaPlus className='text-sm' />} type='primary' className='rounded-full' size='small' onClick={handleAddResponsibility} disabled={responsibilities.length >= 10}></Button>
+                        <Button
+                            icon={<FaPlus className="text-sm" />}
+                            type="primary"
+                            className="rounded-full"
+                            size="small"
+                            onClick={handleAddResponsibility}
+                            disabled={responsibilities.length >= 10}
+                        ></Button>
                     </div>
                     <div className="flex flex-col gap-4">
-                        {
-                            responsibilities?.map((_, index) => (
-                                <div key={index} className='grid grid-cols-[1fr_30px] gap-x-2 items-center'>
-                                    <Controller
-                                        control={control}
-                                        name={`responsibilities.${index}`}
-                                        render={({ field }) => (
-                                            <Input {...field} status={errors.responsibilities?.[index] ? 'error' : undefined} />
-                                        )}
-                                    />
-                                    <Button disabled={responsibilities?.length <= 1} type='primary' danger className='rounded-full' size='small' icon={<MdClear />} onClick={() => handleRemoveResponsibility(index)}>
-
-                                    </Button>
-                                </div>
-                            ))
-                        }
+                        {responsibilities?.map((_, index) => (
+                            <div key={index} className="grid grid-cols-[1fr_30px] gap-x-2 items-center">
+                                <Controller
+                                    control={control}
+                                    name={`responsibilities.${index}`}
+                                    render={({ field }) => (
+                                        <Input
+                                            {...field}
+                                            status={errors.responsibilities?.[index] ? 'error' : undefined}
+                                        />
+                                    )}
+                                />
+                                <Button
+                                    disabled={responsibilities?.length <= 1}
+                                    type="primary"
+                                    danger
+                                    className="rounded-full"
+                                    size="small"
+                                    icon={<MdClear />}
+                                    onClick={() => handleRemoveResponsibility(index)}
+                                ></Button>
+                            </div>
+                        ))}
                     </div>
                 </div>
 
                 <div className="section-card bg-white rounded-lg p-6 mb-6 shadow">
-                    <div className='flex items-center justify-between mb-4'>
-                        <h2 className="text-lg font-semibold text-gray-800">
-                            Requirements
-                        </h2>
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-lg font-semibold text-gray-800">Requirements</h2>
 
-                        <Button icon={<FaPlus className='text-sm' />} type='primary' className='rounded-full' size='small' onClick={handleAddRequirement} disabled={requirements.length >= 10}></Button>
+                        <Button
+                            icon={<FaPlus className="text-sm" />}
+                            type="primary"
+                            className="rounded-full"
+                            size="small"
+                            onClick={handleAddRequirement}
+                            disabled={requirements.length >= 10}
+                        ></Button>
                     </div>
                     <div className="flex flex-col gap-4">
-                        {
-                            requirements?.map((_, index) => (
-                                <div key={index} className='grid grid-cols-[1fr_30px] gap-x-2 items-center'>
-                                    <Controller
-                                        control={control}
-                                        name={`requirements.${index}`}
-                                        render={({ field }) => (
-                                            <Input {...field} status={errors.requirements?.[index] ? 'error' : undefined} />
-                                        )}
-                                    />
-                                    <Button disabled={requirements?.length <= 1} type='primary' danger className='rounded-full' size='small' icon={<MdClear />} onClick={() => handleRemoveRequirement(index)}>
-                                    </Button>
-                                </div>
-                            ))
-                        }
+                        {requirements?.map((_, index) => (
+                            <div key={index} className="grid grid-cols-[1fr_30px] gap-x-2 items-center">
+                                <Controller
+                                    control={control}
+                                    name={`requirements.${index}`}
+                                    render={({ field }) => (
+                                        <Input {...field} status={errors.requirements?.[index] ? 'error' : undefined} />
+                                    )}
+                                />
+                                <Button
+                                    disabled={requirements?.length <= 1}
+                                    type="primary"
+                                    danger
+                                    className="rounded-full"
+                                    size="small"
+                                    icon={<MdClear />}
+                                    onClick={() => handleRemoveRequirement(index)}
+                                ></Button>
+                            </div>
+                        ))}
                     </div>
                 </div>
 
                 <div className="section-card bg-white rounded-lg p-6 mb-6 shadow">
-                    <div className='flex items-center justify-between mb-4'>
-                        <h2 className="text-lg font-semibold text-gray-800">
-                            Benefits
-                        </h2>
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-lg font-semibold text-gray-800">Benefits</h2>
 
-                        <Button icon={<FaPlus className='text-sm' />} type='primary' className='rounded-full' size='small' onClick={handleAddBenefit} disabled={benefits.length >= 10}></Button>
+                        <Button
+                            icon={<FaPlus className="text-sm" />}
+                            type="primary"
+                            className="rounded-full"
+                            size="small"
+                            onClick={handleAddBenefit}
+                            disabled={benefits.length >= 10}
+                        ></Button>
                     </div>
                     <div className="flex flex-col gap-4">
-                        {
-                            benefits?.map((_, index) => (
-                                <div key={index} className='grid grid-cols-[1fr_30px] gap-x-2 items-center'>
-                                    <Controller
-                                        control={control}
-                                        name={`benefits.${index}`}
-                                        render={({ field }) => (
-                                            <Input {...field} status={errors.benefits?.[index] ? 'error' : undefined} />
-                                        )}
-                                    />
-                                    <Button disabled={benefits?.length <= 1} type='primary' danger className='rounded-full' size='small' icon={<MdClear />} onClick={() => handleRemoveBenefit(index)}>
-
-                                    </Button>
-                                </div>
-                            ))
-                        }
+                        {benefits?.map((_, index) => (
+                            <div key={index} className="grid grid-cols-[1fr_30px] gap-x-2 items-center">
+                                <Controller
+                                    control={control}
+                                    name={`benefits.${index}`}
+                                    render={({ field }) => (
+                                        <Input {...field} status={errors.benefits?.[index] ? 'error' : undefined} />
+                                    )}
+                                />
+                                <Button
+                                    disabled={benefits?.length <= 1}
+                                    type="primary"
+                                    danger
+                                    className="rounded-full"
+                                    size="small"
+                                    icon={<MdClear />}
+                                    onClick={() => handleRemoveBenefit(index)}
+                                ></Button>
+                            </div>
+                        ))}
                     </div>
                 </div>
-
 
                 {/* Form Actions */}
                 <div className="flex flex-col sm:flex-row justify-end gap-3 mt-8">
@@ -530,7 +554,7 @@ const CreateJobPage = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default CreateJobPage
+export default CreateJobPage;

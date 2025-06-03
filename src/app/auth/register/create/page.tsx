@@ -1,39 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
-import ErrorMessage from "@/components/ui/ErrorMessage";
-import { Gender } from "@/constants/enum";
-import AuthServices from "@/services/authServices";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Input, Select } from "antd";
-import { isUndefined, omit, omitBy } from "lodash";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
-import toast from "react-hot-toast";
-import { FaBriefcase } from "react-icons/fa";
-import { z } from "zod";
+'use client';
+import ErrorMessage from '@/components/ui/ErrorMessage';
+import { Gender } from '@/constants/enum';
+import AuthServices from '@/services/authServices';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button, Input, Select } from 'antd';
+import { isUndefined, omit, omitBy } from 'lodash';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { FaBriefcase } from 'react-icons/fa';
+import { z } from 'zod';
 
 const schema = z
     .object({
         password: z
             .string()
-            .min(8, "Password must be at least 8 characters")
-            .max(32, "Password must be at most 32 characters"),
+            .min(8, 'Password must be at least 8 characters')
+            .max(32, 'Password must be at most 32 characters'),
         confirmPassword: z.string(),
-        firstName: z
-            .string()
-            .min(1, "First name is required")
-            .max(100, "First name must be at most 100 characters"),
-        lastName: z
-            .string()
-            .min(1, "Last name is required")
-            .max(100, "Last name must be at most 100 characters"),
+        firstName: z.string().min(1, 'First name is required').max(100, 'First name must be at most 100 characters'),
+        lastName: z.string().min(1, 'Last name is required').max(100, 'Last name must be at most 100 characters'),
         phone: z.string().optional(),
         gender: z.number(),
     })
     .refine((data) => data.password === data.confirmPassword, {
-        message: "Passwords must match",
-        path: ["confirmPassword"],
+        message: 'Passwords must match',
+        path: ['confirmPassword'],
     });
 
 type FormValues = z.infer<typeof schema>;
@@ -48,43 +42,43 @@ const RegisterPage = () => {
     } = useForm<FormValues>({
         resolver: zodResolver(schema),
         defaultValues: {
-            password: "",
-            confirmPassword: "",
-            firstName: "",
-            lastName: "",
-            phone: "",
-            gender: Gender.UNKNOWN
-        }
+            password: '',
+            confirmPassword: '',
+            firstName: '',
+            lastName: '',
+            phone: '',
+            gender: Gender.UNKNOWN,
+        },
     });
 
-    const token = searchParams.get("token");
+    const token = searchParams.get('token');
 
     useEffect(() => {
         if (!token) {
-            toast.error("Token is required to register");
-            router.push("/auth/login");
+            toast.error('Token is required to register');
+            router.push('/auth/login');
         }
-    }, [token])
+    }, [token]);
 
     const onSubmit = async (data: FormValues) => {
         let toastId;
         try {
-            toastId = toast.loading("Registering...");
+            toastId = toast.loading('Registering...');
             const objectCleaned = omitBy(data, isUndefined);
 
             const submitData = {
-                ...omit(objectCleaned, ["confirmPassword"]),
+                ...omit(objectCleaned, ['confirmPassword']),
                 token,
             };
 
             await AuthServices.createRecruiter(submitData);
 
-            toast.success("Registration successful!");
+            toast.success('Registration successful!');
 
-            router.push("/auth/login");
+            router.push('/auth/login');
         } catch (e) {
-            console.error("Registration error:", e);
-            toast.error("Registration failed. Please try again later.");
+            console.error('Registration error:', e);
+            toast.error('Registration failed. Please try again later.');
         } finally {
             if (toastId) {
                 toast.dismiss(toastId);
@@ -101,10 +95,7 @@ const RegisterPage = () => {
 
             <p className="text-gray-500">Register a new account</p>
 
-            <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="flex flex-col gap-y-4 w-[380px]"
-            >
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-4 w-[380px]">
                 <div className="flex flex-col gap-y-1">
                     <label htmlFor="password" className="text-sm text-gray-950">
                         Password <span className="text-red-600">*</span>
@@ -119,7 +110,7 @@ const RegisterPage = () => {
                                     {...field}
                                     placeholder="Enter your password"
                                     className="w-full"
-                                    status={errors.password ? "error" : undefined}
+                                    status={errors.password ? 'error' : undefined}
                                 />
                             )}
                         />
@@ -142,7 +133,7 @@ const RegisterPage = () => {
                                     {...field}
                                     placeholder="Enter your password"
                                     className="w-full"
-                                    status={errors.confirmPassword ? "error" : undefined}
+                                    status={errors.confirmPassword ? 'error' : undefined}
                                 />
                             )}
                         />
@@ -166,7 +157,7 @@ const RegisterPage = () => {
                                         {...field}
                                         placeholder="Enter your first name"
                                         className="w-full"
-                                        status={errors.firstName ? "error" : undefined}
+                                        status={errors.firstName ? 'error' : undefined}
                                     />
                                 )}
                             />
@@ -189,7 +180,7 @@ const RegisterPage = () => {
                                         {...field}
                                         placeholder="Enter your last name"
                                         className="w-full"
-                                        status={errors.lastName ? "error" : undefined}
+                                        status={errors.lastName ? 'error' : undefined}
                                     />
                                 )}
                             />
@@ -214,7 +205,7 @@ const RegisterPage = () => {
                                         {...field}
                                         placeholder="Enter your phone number"
                                         className="w-full"
-                                        status={errors.phone ? "error" : undefined}
+                                        status={errors.phone ? 'error' : undefined}
                                     />
                                 )}
                             />
@@ -237,21 +228,20 @@ const RegisterPage = () => {
                                         options={[
                                             {
                                                 value: Gender.UNKNOWN,
-                                                label: "Unknown",
+                                                label: 'Unknown',
                                             },
                                             {
                                                 value: Gender.MALE,
-                                                label: "Male",
+                                                label: 'Male',
                                             },
                                             {
                                                 value: Gender.FEMALE,
-                                                label: "Female",
+                                                label: 'Female',
                                             },
                                             {
                                                 value: Gender.OTHER,
-                                                label: "Other",
+                                                label: 'Other',
                                             },
-
                                         ]}
                                     />
                                 )}

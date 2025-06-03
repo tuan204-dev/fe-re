@@ -1,6 +1,5 @@
-
 export interface ILocation {
-    province: string
-    district: string
-    ward: string
+    province: string;
+    district: string;
+    ward: string;
 }

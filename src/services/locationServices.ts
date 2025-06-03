@@ -1,9 +1,8 @@
-import axios from "axios"
+import axios from 'axios';
 
 const locationInstance = axios.create({
-    baseURL: 'https://esgoo.net/api-tinhthanh'
-})
-
+    baseURL: 'https://esgoo.net/api-tinhthanh',
+});
 
 export interface IESLocation {
     id: string;
@@ -17,38 +16,36 @@ export interface IESLocation {
 
 const getProvinces = async () => {
     const { data } = await locationInstance.get<{
-        data: IESLocation[]
-    }>('/1/0.htm')
+        data: IESLocation[];
+    }>('/1/0.htm');
 
-    return data.data
-}
+    return data.data;
+};
 
 const getDistricts = async (provinceId: string) => {
     const { data } = await locationInstance.get<{
-        data: IESLocation[]
-    }>(`/2/${provinceId}.htm`)
+        data: IESLocation[];
+    }>(`/2/${provinceId}.htm`);
 
-    return data.data
-}
+    return data.data;
+};
 
 const getWards = async (districtId: string) => {
     const { data } = await locationInstance.get<{
-        data: IESLocation[]
-    }>(`/3/${districtId}.htm`)
+        data: IESLocation[];
+    }>(`/3/${districtId}.htm`);
 
-    return data.data
-}
+    return data.data;
+};
 
 const getFullLocation = async (wardId: string) => {
     const { data } = await locationInstance.get<{
-        data: IESLocation
-    }>(`/5/${wardId}.htm`)
+        data: IESLocation;
+    }>(`/5/${wardId}.htm`);
 
-    return data.data
-}
+    return data.data;
+};
 
-const LocationServices = { getProvinces, getDistricts, getWards, getFullLocation }
+const LocationServices = { getProvinces, getDistricts, getWards, getFullLocation };
 
-
-
-export default LocationServices
+export default LocationServices;

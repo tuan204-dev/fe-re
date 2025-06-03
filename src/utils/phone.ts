@@ -1,4 +1,3 @@
-
 export function formatPhoneNumber(phone?: string) {
     if (!phone) return '';
     // Loại bỏ ký tự không phải số

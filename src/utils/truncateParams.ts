@@ -3,10 +3,8 @@ export const truncateParams = (
 ) => {
     // Loại bỏ các giá trị null hoặc rỗng
     const cleanedParams = Object.fromEntries(
-        Object.entries(params).filter(([_, value]) =>
-            value != null &&
-            !(Array.isArray(value) && value.length === 0) &&
-            value !== ''
+        Object.entries(params).filter(
+            ([_, value]) => value != null && !(Array.isArray(value) && value.length === 0) && value !== ''
         )
     );
 

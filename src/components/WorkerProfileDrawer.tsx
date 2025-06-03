@@ -1,21 +1,21 @@
-import { GenderLabel } from '@/constants/enum'
-import { useAppSelector } from '@/redux/store'
-import { formatPhoneNumber } from '@/utils/phone'
-import { Drawer } from 'antd'
-import React, { FC } from 'react'
-import { FaPencilAlt } from 'react-icons/fa'
+import { GenderLabel } from '@/constants/enum';
+import { useAppSelector } from '@/redux/store';
+import { formatPhoneNumber } from '@/utils/phone';
+import { Drawer } from 'antd';
+import React, { FC } from 'react';
+import { FaPencilAlt } from 'react-icons/fa';
 
 interface WorkerProfileDrawerProps {
-    isOpen: boolean
-    onClose: () => void
+    isOpen: boolean;
+    onClose: () => void;
 }
 
 const WorkerProfileDrawer: FC<WorkerProfileDrawerProps> = ({ isOpen, onClose }) => {
-    const selectedWorker = useAppSelector(state => state.recruiting.selectedWorker)
+    const selectedWorker = useAppSelector((state) => state.recruiting.selectedWorker);
 
     return (
         <Drawer open={isOpen} onClose={onClose} width={800}>
-            <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Header Section */}
                 <div className="text-center mb-8">
                     <div className="w-32 h-32 rounded-full bg-gray-200 mx-auto mb-4 overflow-hidden">
@@ -31,7 +31,10 @@ const WorkerProfileDrawer: FC<WorkerProfileDrawerProps> = ({ isOpen, onClose }) 
                         <span>{selectedWorker?.location}</span>
                     </div>
                     <div className="mt-2 text-gray-600">
-                        <p>{selectedWorker?.phone ? `${formatPhoneNumber(selectedWorker?.phone)} | ` : ''}{selectedWorker?.email}</p>
+                        <p>
+                            {selectedWorker?.phone ? `${formatPhoneNumber(selectedWorker?.phone)} | ` : ''}
+                            {selectedWorker?.email}
+                        </p>
                     </div>
                 </div>
                 {/* Career Objective */}
@@ -60,7 +63,7 @@ const WorkerProfileDrawer: FC<WorkerProfileDrawerProps> = ({ isOpen, onClose }) 
                             🎓 Education
                         </h2>
                         <button className="ml-2 edit-icon">
-                            <FaPencilAlt className='text-sm' />
+                            <FaPencilAlt className="text-sm" />
                         </button>
                     </div>
                     <div className="space-y-6">
@@ -85,9 +88,9 @@ const WorkerProfileDrawer: FC<WorkerProfileDrawerProps> = ({ isOpen, onClose }) 
                         </div>
                         <p className="text-gray-600">Science and Technology Course</p>
                     </div> */}
-                        {
-                            selectedWorker?.education && <h3 className="font-medium text-gray-800">{selectedWorker?.education}</h3>
-                        }
+                        {selectedWorker?.education && (
+                            <h3 className="font-medium text-gray-800">{selectedWorker?.education}</h3>
+                        )}
                     </div>
                 </div>
                 <div className="border-b border-gray-200 my-8" />
@@ -197,18 +200,16 @@ const WorkerProfileDrawer: FC<WorkerProfileDrawerProps> = ({ isOpen, onClose }) 
                             🛠️ Skills
                         </h2>
                         <button className="ml-2 edit-icon">
-                            <FaPencilAlt className='text-sm' />
+                            <FaPencilAlt className="text-sm" />
                         </button>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-4">
-                        {
-                            selectedWorker?.skills?.map((skill, index) => (
-                                <div key={index} className="flex justify-between text-sm mb-1">
-                                    <span>{skill.name}</span>
-                                    <span>{skill.level}/5</span>
-                                </div>
-                            ))
-                        }
+                        {selectedWorker?.skills?.map((skill, index) => (
+                            <div key={index} className="flex justify-between text-sm mb-1">
+                                <span>{skill.name}</span>
+                                <span>{skill.level}/5</span>
+                            </div>
+                        ))}
                     </div>
                 </div>
                 {/* <div className="border-b border-gray-200 my-8" /> */}
@@ -315,7 +316,7 @@ const WorkerProfileDrawer: FC<WorkerProfileDrawerProps> = ({ isOpen, onClose }) 
             </div> */}
             </div>
         </Drawer>
-    )
-}
+    );
+};
 
-export default WorkerProfileDrawer
+export default WorkerProfileDrawer;
