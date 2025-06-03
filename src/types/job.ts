@@ -14,6 +14,9 @@ export interface IJob {
     location: string
     salaryRange: ISalaryRange
     jobType: JobType
+    responsibilities: string[]
+    requirements: string[]
+    benefits: string[]
     recruiterId?: string
     companyId?: string
     createdAt?: Date
@@ -28,4 +31,27 @@ export interface IRecruiting {
     progress: RecruitingProgress
     createdAt?: Date
     updatedAt?: Date
+}
+
+export enum SENDER_TYPE {
+    WORKER = 'worker',
+    RECRUITER = 'recruiter',
+}
+
+export interface IMessage {
+    _id?: string
+    senderType: SENDER_TYPE
+    content: string
+    createdAt: Date
+}
+export interface IRecruitingDetail {
+    _id: string
+    progress: RecruitingProgress
+    readMessageId: string | null
+    messages: IMessage[]
+    lastMessage: IMessage
+    createdAt: Date
+    updatedAt: Date
+    job: IJob
+    worker: IWorker
 }

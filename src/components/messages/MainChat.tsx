@@ -7,7 +7,7 @@ import { formatNumber } from '@/utils/number'
 import { formatTime } from '@/utils/time'
 import { Tag } from 'antd'
 import { useMemo } from 'react'
-import { FaCalendarAlt, FaChevronDown, FaDollarSign, FaFilter, FaMapMarkerAlt, FaSearch, FaSort, FaUsers } from 'react-icons/fa'
+import { FaCalendarAlt, FaChevronDown, FaDollarSign, FaMapMarkerAlt, FaUsers } from 'react-icons/fa'
 import WorkerCard from './WorkerCard'
 
 const MainChat = () => {
@@ -120,31 +120,11 @@ const MainChat = () => {
                     </div>
                     <div className="flex items-center mr-4 mb-2">
                         <FaUsers className="mr-1 text-gray-500" />
-                        <span>24 applicants</span>
+                        <span>{recruiting?.length ?? 0} applicants</span>
                     </div>
                     <div className="flex items-center mr-4 mb-2">
                         <FaCalendarAlt className="mr-1 text-gray-500" />
                         <span>Posted {formatTime(String(selectedJob.createdAt))}</span>
-                    </div>
-                </div>
-                <div className="mt-3 flex justify-between items-center">
-                    <div className="relative w-full max-w-md">
-                        <input
-                            type="text"
-                            placeholder="Search candidates..."
-                            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                        <FaSearch className="absolute left-3 top-3 text-gray-400" />
-                    </div>
-                    <div className="flex space-x-2 ml-4">
-                        <button className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm flex items-center hover:bg-gray-50">
-                            <FaFilter className="mr-1 text-gray-500" />
-                            <span>Filter</span>
-                        </button>
-                        <button className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm flex items-center hover:bg-gray-50">
-                            <FaSort className="mr-1 text-gray-500" />
-                            <span>Sort</span>
-                        </button>
                     </div>
                 </div>
             </div>

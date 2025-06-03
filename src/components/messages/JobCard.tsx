@@ -55,14 +55,14 @@ const JobCard: FC<JobCardProps> = ({ job, onClick }) => {
             <p className="text-sm text-gray-500 mt-1 line-clamp-2">
                 {job.description || 'No description available.'}
             </p>
-            <div className="flex justify-between items-center mt-3">
+            {/* <div className="flex justify-between items-center mt-3">
                 <div className="flex items-center">
                     <FaUsers className="text-gray-400 mr-1 text-xs" />
                     <span className="text-xs text-gray-600">24 applicants</span>
                     <div className="w-2 h-2 bg-red-500 rounded-full ml-2" />
                 </div>
                 <span className="text-xs text-gray-500">Updated 2h ago</span>
-            </div>
+            </div> */}
         </div>
     )
 }

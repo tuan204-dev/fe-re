@@ -3,11 +3,14 @@ import { useDistricts, useProvinces, useWards } from '@/hooks/location';
 import JobService from '@/services/jobServices';
 import LocationServices from '@/services/locationServices';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Input, Radio, Tag } from 'antd';
+import { Button, Input, Radio, Tag } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { FaPlus } from 'react-icons/fa';
+import { LuPlus } from "react-icons/lu";
+import { MdClear } from 'react-icons/md';
 import { z } from 'zod';
 
 const schema = z.object({
@@ -18,7 +21,10 @@ const schema = z.object({
     salaryRange: z.object({
         min: z.string().min(0, 'Minimum salary must be at least 0'),
         max: z.string().min(0, 'Maximum salary must be at least 0')
-    })
+    }),
+    responsibilities: z.array(z.string().min(1)).min(1, 'At least one responsibility is required'),
+    requirements: z.array(z.string().min(1)).min(1, 'At least one responsibility is required'),
+    benefits: z.array(z.string().min(1)).min(1, 'At least one responsibility is required'),
 }).refine(
     (data) => {
         if (!data.salaryRange.min || !data.salaryRange.max) return true;
@@ -34,16 +40,7 @@ const schema = z.object({
     }
 )
 
-interface FormData {
-    title: string;
-    description: string;
-    jobType: number;
-    location: string;
-    salaryRange: {
-        min: string;
-        max: string;
-    };
-}
+type FormData = z.infer<typeof schema>;
 
 const CreateJobPage = () => {
     const router = useRouter()
@@ -53,16 +50,52 @@ const CreateJobPage = () => {
     const { provinces } = useProvinces()
     const { districts } = useDistricts(selectedProvinceId)
     const { wards } = useWards(selectedDistrictId)
-    const { formState: { errors, isSubmitting }, handleSubmit, control, watch, setValue } = useForm<FormData>({
+    const { formState: { errors, isSubmitting }, handleSubmit, control, watch, setValue, trigger } = useForm<FormData>({
         resolver: zodResolver(schema),
         defaultValues: {
             jobType: 0, // Default to Full-time
+            responsibilities: [''],
+            requirements: [''],
+            benefits: [''],
         }
     })
 
     const formData = watch()
 
-    const { description } = formData
+    const { description, responsibilities, requirements, benefits } = formData
+
+    const handleAddResponsibility = () => {
+        const updatedResponsibilities = [...responsibilities, ''];
+        setValue('responsibilities', updatedResponsibilities);
+    }
+
+    const handleRemoveResponsibility = (index: number) => {
+        const updatedResponsibilities = [...responsibilities];
+        updatedResponsibilities.splice(index, 1);
+        setValue('responsibilities', updatedResponsibilities);
+    }
+
+    const handleAddRequirement = () => {
+        const updatedRequirements = [...formData.requirements, ''];
+        setValue('requirements', updatedRequirements);
+    }
+
+    const handleRemoveRequirement = (index: number) => {
+        const updatedRequirements = [...formData.requirements];
+        updatedRequirements.splice(index, 1);
+        setValue('requirements', updatedRequirements);
+    }
+
+    const handleAddBenefit = () => {
+        const updatedBenefits = [...formData.benefits, ''];
+        setValue('benefits', updatedBenefits);
+    }
+
+    const handleRemoveBenefit = (index: number) => {
+        const updatedBenefits = [...formData.benefits];
+        updatedBenefits.splice(index, 1);
+        setValue('benefits', updatedBenefits);
+    }
 
     const createDraft = async (data: FormData) => {
         return await JobService.createJob({
@@ -73,7 +106,10 @@ const CreateJobPage = () => {
             salaryRange: {
                 min: Number(data.salaryRange.min),
                 max: Number(data.salaryRange.max)
-            }
+            },
+            responsibilities: data.responsibilities,
+            requirements: data.requirements,
+            benefits: data.benefits,
         })
     }
 
@@ -108,6 +144,7 @@ const CreateJobPage = () => {
             const fullLocation = await LocationServices.getFullLocation(selectedWardId);
 
             setValue('location', fullLocation.full_name);
+            trigger('location');
         })()
     }, [selectedWardId])
 
@@ -389,6 +426,90 @@ const CreateJobPage = () => {
                         </div>
                     </div>
                 </div>
+
+                <div className="section-card bg-white rounded-lg p-6 mb-6 shadow">
+                    <div className='flex items-center justify-between mb-4'>
+                        <h2 className="text-lg font-semibold text-gray-800">
+                            Responsibilities
+                        </h2>
+
+                        <Button icon={<FaPlus className='text-sm' />} type='primary' className='rounded-full' size='small' onClick={handleAddResponsibility} disabled={responsibilities.length >= 10}></Button>
+                    </div>
+                    <div className="flex flex-col gap-4">
+                        {
+                            responsibilities?.map((_, index) => (
+                                <div key={index} className='grid grid-cols-[1fr_30px] gap-x-2 items-center'>
+                                    <Controller
+                                        control={control}
+                                        name={`responsibilities.${index}`}
+                                        render={({ field }) => (
+                                            <Input {...field} status={errors.responsibilities?.[index] ? 'error' : undefined} />
+                                        )}
+                                    />
+                                    <Button disabled={responsibilities?.length <= 1} type='primary' danger className='rounded-full' size='small' icon={<MdClear />} onClick={() => handleRemoveResponsibility(index)}>
+
+                                    </Button>
+                                </div>
+                            ))
+                        }
+                    </div>
+                </div>
+
+                <div className="section-card bg-white rounded-lg p-6 mb-6 shadow">
+                    <div className='flex items-center justify-between mb-4'>
+                        <h2 className="text-lg font-semibold text-gray-800">
+                            Requirements
+                        </h2>
+
+                        <Button icon={<FaPlus className='text-sm' />} type='primary' className='rounded-full' size='small' onClick={handleAddRequirement} disabled={requirements.length >= 10}></Button>
+                    </div>
+                    <div className="flex flex-col gap-4">
+                        {
+                            requirements?.map((_, index) => (
+                                <div key={index} className='grid grid-cols-[1fr_30px] gap-x-2 items-center'>
+                                    <Controller
+                                        control={control}
+                                        name={`requirements.${index}`}
+                                        render={({ field }) => (
+                                            <Input {...field} status={errors.requirements?.[index] ? 'error' : undefined} />
+                                        )}
+                                    />
+                                    <Button disabled={requirements?.length <= 1} type='primary' danger className='rounded-full' size='small' icon={<MdClear />} onClick={() => handleRemoveRequirement(index)}>
+                                    </Button>
+                                </div>
+                            ))
+                        }
+                    </div>
+                </div>
+
+                <div className="section-card bg-white rounded-lg p-6 mb-6 shadow">
+                    <div className='flex items-center justify-between mb-4'>
+                        <h2 className="text-lg font-semibold text-gray-800">
+                            Benefits
+                        </h2>
+
+                        <Button icon={<FaPlus className='text-sm' />} type='primary' className='rounded-full' size='small' onClick={handleAddBenefit} disabled={benefits.length >= 10}></Button>
+                    </div>
+                    <div className="flex flex-col gap-4">
+                        {
+                            benefits?.map((_, index) => (
+                                <div key={index} className='grid grid-cols-[1fr_30px] gap-x-2 items-center'>
+                                    <Controller
+                                        control={control}
+                                        name={`benefits.${index}`}
+                                        render={({ field }) => (
+                                            <Input {...field} status={errors.benefits?.[index] ? 'error' : undefined} />
+                                        )}
+                                    />
+                                    <Button disabled={benefits?.length <= 1} type='primary' danger className='rounded-full' size='small' icon={<MdClear />} onClick={() => handleRemoveBenefit(index)}>
+
+                                    </Button>
+                                </div>
+                            ))
+                        }
+                    </div>
+                </div>
+
 
                 {/* Form Actions */}
                 <div className="flex flex-col sm:flex-row justify-end gap-3 mt-8">

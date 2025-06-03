@@ -29,9 +29,9 @@ const WorkerCard: FC<WorkerCardProps> = ({ recruiting }) => {
                     </div>
                     <div>
                         <h4 className="font-medium text-gray-800">{recruiting?.worker?.firstName}</h4>
-                        <p className="text-xs text-gray-500">
+                        {/* <p className="text-xs text-gray-500">
                             5 years in front-end
-                        </p>
+                        </p> */}
                     </div>
                 </div>
                 <div className="flex items-center">
@@ -41,12 +41,12 @@ const WorkerCard: FC<WorkerCardProps> = ({ recruiting }) => {
                 </div>
             </div>
             <div className="mt-3 flex justify-between items-center">
-                <div>
+                {/* <div>
                     <p className="text-sm text-gray-600">
                         <FaDollarSign className="mr-1 text-gray-500 inline" />
                         $120,000
                     </p>
-                </div>
+                </div> */}
                 <div className="flex space-x-2">
                     <button className="text-blue-500 hover:text-blue-700">
                         <FaEnvelope />

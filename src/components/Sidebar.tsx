@@ -54,10 +54,12 @@ const Sidebar = () => {
     return (
         <div className="w-64 bg-white shadow-sm flex-shrink-0 hidden md:block transition-all duration-300 fixed top-0 left-0 bottom-0 border-r border-gray-200">
             <div className="p-4 border-b border-gray-200">
-                <h1 className="text-xl font-bold flex items-center gap-2 text-blue-600">
-                    <FaBriefcase className="text-blue-600" />
-                    <span>RecruitPro</span>
-                </h1>
+                <Link href={'/'}>
+                    <h1 className="text-xl font-bold flex items-center gap-2 text-blue-600">
+                        <FaBriefcase className="text-blue-600" />
+                        <span>RecruitPro</span>
+                    </h1>
+                </Link>
             </div>
             <nav className="p-4 space-y-1">
                 {
